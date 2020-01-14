@@ -1,0 +1,120 @@
+﻿@model AirlineBooking.Models.ManagementViewModel
+@using AirlineBooking.Models
+@{
+    ViewBag.Title = "AddFlight";
+}
+
+<h2>Add Flight</h2>
+@if (TempData["Message"] != null)
+{
+    var message = (Message)TempData["Message"];
+    if (message.MessageCategory == (int)MessageCategory.SUCCESS)
+    {
+        <div class="alert alert-success" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+    if (message.MessageCategory == (int)MessageCategory.ERROR || message.MessageCategory == (int)MessageCategory.DANGER)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+    if (message.MessageCategory == (int)MessageCategory.INFO)
+    {
+        <div class="alert alert-info" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.FlightName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FlightName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FlightName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OriginCity, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select class="form-control" name="OriginCity">
+                        @if (Model.AvailableFlightCitiesSelectList?.Count > 0)
+                        {
+                            foreach (var item in Model.AvailableFlightCitiesSelectList)
+                            {
+                                <option value="@item.Id">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.OriginCity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DestinationCity, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select class="form-control" name="DestinationCity">
+                        @if (Model.AvailableFlightCitiesSelectList?.Count > 0)
+                        {
+                            foreach (var item in Model.AvailableFlightCitiesSelectList)
+                            {
+                                <option value="@item.Id">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.DestinationCity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DepartureDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DepartureDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                    @Html.ValidationMessageFor(model => model.DepartureDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TotalSeats, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.TotalSeats, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TotalSeats, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Mileage, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Mileage, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Mileage, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PricePerTicket, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PricePerTicket, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PricePerTicket, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

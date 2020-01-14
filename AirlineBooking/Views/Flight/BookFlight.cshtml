@@ -1,0 +1,191 @@
+﻿@model AirlineBooking.Models.FlightViewModel
+@using AirlineBooking.Models
+@{
+    ViewBag.Title = "BookFlight";
+}
+
+<h2>Book Flight</h2>
+
+@if (TempData["Message"] != null)
+{
+    var message = (Message)TempData["Message"];
+    if (message.MessageCategory == (int)MessageCategory.SUCCESS)
+    {
+        <div class="alert alert-success" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+    if (message.MessageCategory == (int)MessageCategory.ERROR || message.MessageCategory == (int)MessageCategory.DANGER)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+    if (message.MessageCategory == (int)MessageCategory.INFO)
+    {
+        <div class="alert alert-info" role="alert">
+            <h5>@message.MessageText</h5>
+        </div>
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.FlightId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartureDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DepartureDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.ValidationMessageFor(model => model.DepartureDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfTickets, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NumberOfTickets, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NumberOfTickets, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FlightClass, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="FlightClass" class="form-control">
+                    @if (Model.FlightClassesSelectList?.Count > 0)
+                    {
+                        foreach (var item in Model.FlightClassesSelectList)
+                        {
+                            <option value="@item.Id">@item.Text</option>
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.FlightClass, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TripType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select name="TripType" class="form-control">
+                    @if (Model.TripTypesSelectList?.Count > 0)
+                    {
+                        foreach (var item in Model.TripTypesSelectList)
+                        {
+                            <option value="@item.Id">@item.Text</option>
+                        }
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.TripType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Book" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.IsOneWayTrip && Model.FlightSummary != null)
+{
+    <div class="col-xs-12 col-md-12">
+        <h3>One-Way Flight</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Flight Name</td>
+                    <td>Number of tickets</td>
+                    <td>From</td>
+                    <td>To</td>
+                    <td>Total Price</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.FlightSummary.FlightName</td>
+                    <td>@Model.FlightSummary.NumberOfTickets</td>
+                    <td>@Model.FlightSummary.From</td>
+                    <td>@Model.FlightSummary.To</td>
+                    <td>@Model.FlightSummary.PricePerTicket</td>
+                    <td><a href="@Url.Action("FinalizeBooking", "Flight", new { flightId = Model.FlightSummary.FlightId, noOfTickets = Model.NumberOfTickets })" class="btn btn-danger">Finalize Booking</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.IsRoundTrip && Model.FlightSummary != null && Model.ReturnFlightSummary != null)
+{
+    <h3>Round Trip</h3>
+    <h4>First Leg</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>Flight Name</td>
+                <td>Number of tickets</td>
+                <td>From</td>
+                <td>To</td>
+                <td>Total Price</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.FlightSummary.FlightName</td>
+                <td>@Model.FlightSummary.NumberOfTickets</td>
+                <td>@Model.FlightSummary.From</td>
+                <td>@Model.FlightSummary.To</td>
+                <td>@Model.FlightSummary.PricePerTicket</td>
+                <td><a href="@Url.Action("FinalizeBooking", "Flight", new { flightId = Model.FlightSummary.FlightId, noOfTickets = Model.NumberOfTickets })" class="btn btn-danger">Finalize Booking</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    if (Model.ReturnFlightSummary?.FlightName != null)
+    {
+        <hr />
+        <h4>Second Leg</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Flight Name</td>
+                    <td>Number of tickets</td>
+                    <td>From</td>
+                    <td>To</td>
+                    <td>Total Price</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.ReturnFlightSummary.FlightName</td>
+                    <td>@Model.ReturnFlightSummary.NumberOfTickets</td>
+                    <td>@Model.ReturnFlightSummary.From</td>
+                    <td>@Model.ReturnFlightSummary.To</td>
+                    <td>@Model.ReturnFlightSummary.PricePerTicket</td>
+                    <td><a href="@Url.Action("FinalizeBooking", "Flight", new { flightId = Model.FlightSummary.FlightId, noOfTickets = Model.NumberOfTickets })" class="btn btn-danger">Finalize Booking</a></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="col-xs-12 col-md-12" style="padding: 20px 10px !important;">
+            <h3 class="text-center text-info">No Return Flight was found for this route</h3>
+        </div>
+    }
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

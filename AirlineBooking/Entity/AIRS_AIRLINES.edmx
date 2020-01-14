@@ -1,0 +1,522 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ARS_AIRLINESModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AVAILABLE_FLIGHT_CITIES">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FLIGHT_AVAILABLITY">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FlightId" Type="int" Nullable="false" />
+          <Property Name="TotalAvaliableSeats" Type="int" Nullable="false" />
+          <Property Name="CurrentSeatsTaken" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FLIGHT_CLASS">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FLIGHT_RESERVATION">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="FlightId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BlockingNumber" Type="text" />
+          <Property Name="CancellationNumber" Type="text" />
+          <Property Name="DateCreated" Type="date" />
+        </EntityType>
+        <EntityType Name="FLIGHT_SCHEDULE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="From" Type="int" Nullable="false" />
+          <Property Name="To" Type="int" Nullable="false" />
+          <Property Name="Mileage" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="date" Nullable="false" />
+          <Property Name="DepartureDate" Type="date" />
+          <Property Name="PricePerTicket" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="SEX">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TRIP_TYPE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Address" Type="text" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="SexId" Type="int" Nullable="false" />
+          <Property Name="Age" Type="int" Nullable="false" />
+          <Property Name="CreditCardNumber" Type="nvarchar" MaxLength="255" />
+          <Property Name="FlyMiles" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="date" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE">
+          <End Role="FLIGHT_SCHEDULE" Type="Self.FLIGHT_SCHEDULE" Multiplicity="1" />
+          <End Role="FLIGHT_AVAILABLITY" Type="Self.FLIGHT_AVAILABLITY" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_AVAILABLITY">
+              <PropertyRef Name="FlightId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE">
+          <End Role="FLIGHT_SCHEDULE" Type="Self.FLIGHT_SCHEDULE" Multiplicity="1" />
+          <End Role="FLIGHT_RESERVATION" Type="Self.FLIGHT_RESERVATION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_RESERVATION">
+              <PropertyRef Name="FlightId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_RESERVATION_USER">
+          <End Role="USER" Type="Self.USER" Multiplicity="1" />
+          <End Role="FLIGHT_RESERVATION" Type="Self.FLIGHT_RESERVATION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USER">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_RESERVATION">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES">
+          <End Role="AVAILABLE_FLIGHT_CITIES" Type="Self.AVAILABLE_FLIGHT_CITIES" Multiplicity="1" />
+          <End Role="FLIGHT_SCHEDULE" Type="Self.FLIGHT_SCHEDULE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AVAILABLE_FLIGHT_CITIES">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="From" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1">
+          <End Role="AVAILABLE_FLIGHT_CITIES" Type="Self.AVAILABLE_FLIGHT_CITIES" Multiplicity="1" />
+          <End Role="FLIGHT_SCHEDULE" Type="Self.FLIGHT_SCHEDULE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AVAILABLE_FLIGHT_CITIES">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="To" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USER_SEX">
+          <End Role="SEX" Type="Self.SEX" Multiplicity="1" />
+          <End Role="USER" Type="Self.USER" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEX">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="USER">
+              <PropertyRef Name="SexId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ARS_AIRLINESModelStoreContainer">
+          <EntitySet Name="AVAILABLE_FLIGHT_CITIES" EntityType="Self.AVAILABLE_FLIGHT_CITIES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FLIGHT_AVAILABLITY" EntityType="Self.FLIGHT_AVAILABLITY" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FLIGHT_CLASS" EntityType="Self.FLIGHT_CLASS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FLIGHT_RESERVATION" EntityType="Self.FLIGHT_RESERVATION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FLIGHT_SCHEDULE" EntityType="Self.FLIGHT_SCHEDULE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SEX" EntityType="Self.SEX" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TRIP_TYPE" EntityType="Self.TRIP_TYPE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE" Association="Self.FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE">
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+            <End Role="FLIGHT_AVAILABLITY" EntitySet="FLIGHT_AVAILABLITY" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE" Association="Self.FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE">
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+            <End Role="FLIGHT_RESERVATION" EntitySet="FLIGHT_RESERVATION" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_RESERVATION_USER" Association="Self.FK_FLIGHT_RESERVATION_USER">
+            <End Role="USER" EntitySet="USER" />
+            <End Role="FLIGHT_RESERVATION" EntitySet="FLIGHT_RESERVATION" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES" Association="Self.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES">
+            <End Role="AVAILABLE_FLIGHT_CITIES" EntitySet="AVAILABLE_FLIGHT_CITIES" />
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1" Association="Self.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1">
+            <End Role="AVAILABLE_FLIGHT_CITIES" EntitySet="AVAILABLE_FLIGHT_CITIES" />
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USER_SEX" Association="Self.FK_USER_SEX">
+            <End Role="SEX" EntitySet="SEX" />
+            <End Role="USER" EntitySet="USER" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ARS_AIRLINESModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AVAILABLE_FLIGHT_CITIES">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="FLIGHT_SCHEDULE" Relationship="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES" FromRole="AVAILABLE_FLIGHT_CITIES" ToRole="FLIGHT_SCHEDULE" />
+          <NavigationProperty Name="FLIGHT_SCHEDULE1" Relationship="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1" FromRole="AVAILABLE_FLIGHT_CITIES" ToRole="FLIGHT_SCHEDULE" />
+          </EntityType>
+        <EntityType Name="FLIGHT_AVAILABLITY">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FlightId" Type="Int32" Nullable="false" />
+          <Property Name="TotalAvaliableSeats" Type="Int32" Nullable="false" />
+          <Property Name="CurrentSeatsTaken" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FLIGHT_SCHEDULE" Relationship="ARS_AIRLINESModel.FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE" FromRole="FLIGHT_AVAILABLITY" ToRole="FLIGHT_SCHEDULE" />
+        </EntityType>
+        <EntityType Name="FLIGHT_CLASS">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FLIGHT_RESERVATION">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="FlightId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BlockingNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CancellationNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="USER" Relationship="Self.FK_FLIGHT_RESERVATION_USER" FromRole="FLIGHT_RESERVATION" ToRole="USER" />
+          <NavigationProperty Name="FLIGHT_SCHEDULE" Relationship="ARS_AIRLINESModel.FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE" FromRole="FLIGHT_RESERVATION" ToRole="FLIGHT_SCHEDULE" />
+        </EntityType>
+        <EntityType Name="SEX">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="USERs" Relationship="Self.FK_USER_SEX" FromRole="SEX" ToRole="USER" />
+        </EntityType>
+        <EntityType Name="TRIP_TYPE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SexId" Type="Int32" Nullable="false" />
+          <Property Name="Age" Type="Int32" Nullable="false" />
+          <Property Name="CreditCardNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FlyMiles" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="FLIGHT_RESERVATION" Relationship="Self.FK_FLIGHT_RESERVATION_USER" FromRole="USER" ToRole="FLIGHT_RESERVATION" />
+          <NavigationProperty Name="SEX" Relationship="Self.FK_USER_SEX" FromRole="USER" ToRole="SEX" />
+        </EntityType>
+        <Association Name="FK_FLIGHT_RESERVATION_USER">
+          <End Role="USER" Type="Self.USER" Multiplicity="1" />
+          <End Role="FLIGHT_RESERVATION" Type="Self.FLIGHT_RESERVATION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USER">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_RESERVATION">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USER_SEX">
+          <End Role="SEX" Type="Self.SEX" Multiplicity="1" />
+          <End Role="USER" Type="Self.USER" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEX">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="USER">
+              <PropertyRef Name="SexId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ARS_AIRLINESEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AVAILABLE_FLIGHT_CITIES" EntityType="Self.AVAILABLE_FLIGHT_CITIES" />
+          <EntitySet Name="FLIGHT_AVAILABLITY" EntityType="Self.FLIGHT_AVAILABLITY" />
+          <EntitySet Name="FLIGHT_CLASS" EntityType="Self.FLIGHT_CLASS" />
+          <EntitySet Name="FLIGHT_RESERVATION" EntityType="Self.FLIGHT_RESERVATION" />
+          <EntitySet Name="SEXes" EntityType="Self.SEX" />
+          <EntitySet Name="TRIP_TYPE" EntityType="Self.TRIP_TYPE" />
+          <EntitySet Name="USERs" EntityType="Self.USER" />
+          <AssociationSet Name="FK_FLIGHT_RESERVATION_USER" Association="Self.FK_FLIGHT_RESERVATION_USER">
+            <End Role="USER" EntitySet="USERs" />
+            <End Role="FLIGHT_RESERVATION" EntitySet="FLIGHT_RESERVATION" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USER_SEX" Association="Self.FK_USER_SEX">
+            <End Role="SEX" EntitySet="SEXes" />
+            <End Role="USER" EntitySet="USERs" />
+          </AssociationSet>
+          <EntitySet Name="FLIGHT_SCHEDULE" EntityType="ARS_AIRLINESModel.FLIGHT_SCHEDULE" />
+          <AssociationSet Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES" Association="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES">
+            <End Role="AVAILABLE_FLIGHT_CITIES" EntitySet="AVAILABLE_FLIGHT_CITIES" />
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1" Association="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1">
+            <End Role="AVAILABLE_FLIGHT_CITIES" EntitySet="AVAILABLE_FLIGHT_CITIES" />
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE" Association="ARS_AIRLINESModel.FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE">
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+            <End Role="FLIGHT_AVAILABLITY" EntitySet="FLIGHT_AVAILABLITY" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE" Association="ARS_AIRLINESModel.FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE">
+            <End Role="FLIGHT_SCHEDULE" EntitySet="FLIGHT_SCHEDULE" />
+            <End Role="FLIGHT_RESERVATION" EntitySet="FLIGHT_RESERVATION" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="FLIGHT_SCHEDULE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="From" Type="Int32" Nullable="false" />
+          <Property Name="To" Type="Int32" Nullable="false" />
+          <Property Name="Mileage" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DepartureDate" Type="DateTime" Precision="0" />
+          <Property Name="PricePerTicket" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="AVAILABLE_FLIGHT_CITIES" Relationship="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES" FromRole="FLIGHT_SCHEDULE" ToRole="AVAILABLE_FLIGHT_CITIES" />
+          <NavigationProperty Name="AVAILABLE_FLIGHT_CITIES1" Relationship="ARS_AIRLINESModel.FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1" FromRole="FLIGHT_SCHEDULE" ToRole="AVAILABLE_FLIGHT_CITIES" />
+          <NavigationProperty Name="FLIGHT_AVAILABLITY" Relationship="ARS_AIRLINESModel.FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE" FromRole="FLIGHT_SCHEDULE" ToRole="FLIGHT_AVAILABLITY" />
+          <NavigationProperty Name="FLIGHT_RESERVATION" Relationship="ARS_AIRLINESModel.FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE" FromRole="FLIGHT_SCHEDULE" ToRole="FLIGHT_RESERVATION" />
+        </EntityType>
+        <Association Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES">
+          <End Type="ARS_AIRLINESModel.AVAILABLE_FLIGHT_CITIES" Role="AVAILABLE_FLIGHT_CITIES" Multiplicity="1" />
+          <End Type="ARS_AIRLINESModel.FLIGHT_SCHEDULE" Role="FLIGHT_SCHEDULE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AVAILABLE_FLIGHT_CITIES">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="From" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_SCHEDULE_AVAILABLE_FLIGHT_CITIES1">
+          <End Type="ARS_AIRLINESModel.AVAILABLE_FLIGHT_CITIES" Role="AVAILABLE_FLIGHT_CITIES" Multiplicity="1" />
+          <End Type="ARS_AIRLINESModel.FLIGHT_SCHEDULE" Role="FLIGHT_SCHEDULE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AVAILABLE_FLIGHT_CITIES">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="To" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_AVAILABLITY_FLIGHT_SCHEDULE">
+          <End Type="ARS_AIRLINESModel.FLIGHT_SCHEDULE" Role="FLIGHT_SCHEDULE" Multiplicity="1" />
+          <End Type="ARS_AIRLINESModel.FLIGHT_AVAILABLITY" Role="FLIGHT_AVAILABLITY" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_AVAILABLITY">
+              <PropertyRef Name="FlightId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FLIGHT_RESERVATION_FLIGHT_SCHEDULE">
+          <End Type="ARS_AIRLINESModel.FLIGHT_SCHEDULE" Role="FLIGHT_SCHEDULE" Multiplicity="1" />
+          <End Type="ARS_AIRLINESModel.FLIGHT_RESERVATION" Role="FLIGHT_RESERVATION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FLIGHT_SCHEDULE">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FLIGHT_RESERVATION">
+              <PropertyRef Name="FlightId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ARS_AIRLINESModelStoreContainer" CdmEntityContainer="ARS_AIRLINESEntities1">
+          <EntitySetMapping Name="AVAILABLE_FLIGHT_CITIES">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.AVAILABLE_FLIGHT_CITIES">
+              <MappingFragment StoreEntitySet="AVAILABLE_FLIGHT_CITIES">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FLIGHT_AVAILABLITY">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.FLIGHT_AVAILABLITY">
+              <MappingFragment StoreEntitySet="FLIGHT_AVAILABLITY">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FlightId" ColumnName="FlightId" />
+                <ScalarProperty Name="TotalAvaliableSeats" ColumnName="TotalAvaliableSeats" />
+                <ScalarProperty Name="CurrentSeatsTaken" ColumnName="CurrentSeatsTaken" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FLIGHT_CLASS">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.FLIGHT_CLASS">
+              <MappingFragment StoreEntitySet="FLIGHT_CLASS">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FLIGHT_RESERVATION">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.FLIGHT_RESERVATION">
+              <MappingFragment StoreEntitySet="FLIGHT_RESERVATION">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FlightId" ColumnName="FlightId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="BlockingNumber" ColumnName="BlockingNumber" />
+                <ScalarProperty Name="CancellationNumber" ColumnName="CancellationNumber" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SEXes">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.SEX">
+              <MappingFragment StoreEntitySet="SEX">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TRIP_TYPE">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.TRIP_TYPE">
+              <MappingFragment StoreEntitySet="TRIP_TYPE">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="USERs">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.USER">
+              <MappingFragment StoreEntitySet="USER">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SexId" ColumnName="SexId" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="CreditCardNumber" ColumnName="CreditCardNumber" />
+                <ScalarProperty Name="FlyMiles" ColumnName="FlyMiles" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FLIGHT_SCHEDULE">
+            <EntityTypeMapping TypeName="ARS_AIRLINESModel.FLIGHT_SCHEDULE">
+              <MappingFragment StoreEntitySet="FLIGHT_SCHEDULE">
+                <ScalarProperty Name="PricePerTicket" ColumnName="PricePerTicket" />
+                <ScalarProperty Name="DepartureDate" ColumnName="DepartureDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
